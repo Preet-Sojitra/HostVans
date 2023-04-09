@@ -1,8 +1,11 @@
-import {useParams} from "react-router-dom"
+import {useParams, Link, useLocation} from "react-router-dom"
 import {useEffect, useState} from "react"
 
 export default function VanDetail() {
   const params = useParams()
+  // will use useLocation hook to catch the state that we passed from "Vans"
+  const location = useLocation()
+  // console.log(location)
 
   const [van, setVan] = useState(null)
 
@@ -17,8 +20,23 @@ export default function VanDetail() {
 
   //   console.log(van)
 
+  // if location.state exists then it will go and find search if it doesn't then it will put empty string in this way if location.state is null we will not get any bug/errors
+  // This is called optional chaining
+  const search = location.state?.search || ""
+
   return (
     <div className="van-detail-container">
+      {/* Here one problem is, if user filters and then go to detial page and then if he clicks back hen it will go back to all vans page instead of to page with filters */}
+
+      {/* <Link to=".." relative="path" className="back-button">
+        &larr; <span>Back to all vans</span>
+      </Link> */}
+
+      {/* and to solve this problem we will use Link State, we will pass state from Vans.jsx page and will catch it here using useLocationHook */}
+      <Link to={`..?${search}`} relative="path" className="back-button">
+        &larr; <span>Back to all vans</span>
+      </Link>
+
       {van ? (
         <div className="van-detail">
           <img src={van.imageUrl} />

@@ -1,6 +1,12 @@
 import {Link, NavLink} from "react-router-dom"
 
 export default function Header() {
+  const activeStyle = {
+    fontWeight: "bold",
+    textDecoration: "underline",
+    color: "#161616",
+  }
+
   return (
     <header>
       <Link className="site-logo" to="/">
@@ -11,19 +17,22 @@ export default function Header() {
         <NavLink
           to="/host"
           // This classname takes function and inside that function it takes object as parameter, here we care about "isActive" property, so we destructure it right there and return the classname "active-link" is "isActive" is true
-          className={({isActive}) => isActive && "active-link"}
+          // className={({isActive}) => (isActive ? "active-link" : null)}
+          style={({isActive}) => (isActive ? activeStyle : null)}
         >
           Host
         </NavLink>
         <NavLink
           to="/about"
-          className={({isActive}) => isActive && "active-link"}
+          // className={({isActive}) => (isActive ? "active-link" : null)}
+          style={({isActive}) => (isActive ? activeStyle : null)}
         >
           About
         </NavLink>
         <NavLink
           to="/vans"
-          className={({isActive}) => isActive && "active-link"}
+          // className={({ isActive }) => (isActive ? "active-link" : null)}
+          style={({isActive}) => (isActive ? activeStyle : null)}
         >
           Vans
         </NavLink>

@@ -1,8 +1,13 @@
-import {BrowserRouter, Routes, Route, Link} from "react-router-dom"
+import {
+  createBrowserRouter,
+  RouterProvider,
+  createRoutesFromElements,
+  Route,
+} from "react-router-dom"
 
 import Home from "./pages/Home"
 import About from "./pages/About"
-import Vans from "./pages/Vans/Vans"
+import Vans, {loader as vansLoader} from "./pages/Vans/Vans"
 import VanDetail from "./pages/Vans/VanDetail"
 import Layout from "./components/Layout"
 import Dashboard from "./pages/Host/Dashboard"
@@ -15,38 +20,42 @@ import HostVanPricing from "./pages/Host/HostVanPricing"
 import HostVanPhotos from "./pages/Host/HostVanPhotos"
 import HostVanInfo from "./pages/Host/HostVanInfo"
 import NotFound from "./pages/NotFound"
+import Error from "./components/Error"
+
+// Since we will be using DataLayer API and BrowserRouter does not support it we need to use createBroweser Router and needs to change the setup
+
+const browserRouter = createBrowserRouter(
+  createRoutesFromElements(
+    <Route element={<Layout />} errorElement={<Error />}>
+      <Route path="/" element={<Home />} />
+      <Route path="/about" element={<About />} />
+      <Route
+        path="/vans"
+        element={<Vans />}
+        // we can use errorElement to show the error when any error occurs either in our component or in our loader function
+        // errorElement={<Error />}
+        // we can pass errorElement on the top level also, by doing this any error which occurs in the most nested route will also be handeled
+        loader={vansLoader}
+      />
+      <Route path="/vans/:id" element={<VanDetail />} />
+
+      <Route path="/host" element={<HostLayout />}>
+        <Route index element={<Dashboard />} />
+        <Route path="income" element={<Income />} />
+        <Route path="reviews" element={<Reviews />} />
+
+        <Route path="vans" element={<HostVans />} />
+        <Route path="vans/:id" element={<HostVanDetail />}>
+          <Route index element={<HostVanInfo />} />
+          <Route path="pricing" element={<HostVanPricing />} />
+          <Route path="photos" element={<HostVanPhotos />} />
+        </Route>
+      </Route>
+      <Route path="*" element={<NotFound />} />
+    </Route>
+  )
+)
 
 export default function App() {
-  return (
-    <BrowserRouter>
-      <Routes>
-        {/* This will render the layout for all the routes. First layout will render then the component matching the path will render */}
-        {/* With simply h1 in layout component, it will render only that h1 for all the below routes */}
-        <Route element={<Layout />}>
-          <Route path="/" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/vans" element={<Vans />} />
-          <Route path="/vans/:id" element={<VanDetail />} />
-
-          {/* Nested Route */}
-          <Route path="/host" element={<HostLayout />}>
-            {/* We can use relative path inside parent route. When route starts with "/" it is absoulute route */}
-            {/* When we want to display component on route on which layout is render, we can add "index" as prop to show that additional component (for relative routing). Here Dashboard will be shown on "/host" route only  */}
-            <Route index element={<Dashboard />} />
-            <Route path="income" element={<Income />} />
-            <Route path="reviews" element={<Reviews />} />
-
-            <Route path="vans" element={<HostVans />} />
-            <Route path="vans/:id" element={<HostVanDetail />}>
-              <Route index element={<HostVanInfo />} />
-              <Route path="pricing" element={<HostVanPricing />} />
-              <Route path="photos" element={<HostVanPhotos />} />
-            </Route>
-          </Route>
-          {/* Catch all route */}
-          <Route path="*" element={<NotFound />} />
-        </Route>
-      </Routes>
-    </BrowserRouter>
-  )
+  return <RouterProvider router={browserRouter} />
 }

@@ -23,6 +23,7 @@ export default function VanDetail() {
   // if location.state exists then it will go and find search if it doesn't then it will put empty string in this way if location.state is null we will not get any bug/errors
   // This is called optional chaining
   const search = location.state?.search || ""
+  // console.log(search)
 
   return (
     <div className="van-detail-container">
@@ -34,7 +35,7 @@ export default function VanDetail() {
 
       {/* and to solve this problem we will use Link State, we will pass state from Vans.jsx page and will catch it here using useLocationHook */}
       <Link to={`..?${search}`} relative="path" className="back-button">
-        &larr; <span>Back to all vans</span>
+        &larr; <span>Back to {search ? search.split("=")[1] : "all"} vans</span>
       </Link>
 
       {van ? (

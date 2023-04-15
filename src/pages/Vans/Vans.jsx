@@ -1,5 +1,6 @@
 import {useEffect, useState} from "react"
 import {Link, useSearchParams} from "react-router-dom"
+import {getVans} from "../../api"
 
 export default function Vans() {
   // We will use useSearchParams to get the query Parameter
@@ -13,12 +14,33 @@ export default function Vans() {
   // console.log(typeFilter)
 
   const [vans, setVans] = useState([])
+  // for handling sad path
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState(null)
 
+  // There is lot more going here to handle sad path. and we need to set this up for all the pages where we are fetching data from servers. So we can see there is lot more repetition goin on here
+  // All these is happening because we are loading page first and then we are doing fetch request so we need to handle edge cases
+  // and that's where data layer api comes in
+
+  // refactord useEffect code: shifted fetching in api.js so that we can implement data layer api
   useEffect(() => {
-    fetch("/api/vans")
-      .then((res) => res.json())
-      .then((data) => setVans(data.vans))
-      .catch((err) => console.log(err))
+    async function loadVans() {
+      // Here we haven't take into account what if server fails to respond, then in that case it will stuck on loading. So we will handle that now
+      setLoading(true)
+      try {
+        // happy path
+        const data = await getVans()
+        setVans(data)
+      } catch (error) {
+        // sad path
+        // console.log(error)
+        setError(error)
+      } finally {
+        // whether we get vans or err we need to make loading false
+        setLoading(false)
+      }
+    }
+    loadVans()
   }, [])
 
   // Filtering vans
@@ -95,6 +117,14 @@ export default function Vans() {
           Simple
         </button>
    */
+
+  // Handling sad path
+  if (loading) {
+    return <h1>Loading...</h1>
+  }
+  if (error) {
+    return <h1>There was an error: {error.message}</h1>
+  }
 
   return (
     <div className="van-list-container">

@@ -1,22 +1,32 @@
-import {useParams, Link, useLocation} from "react-router-dom"
+import {useParams, Link, useLocation, useLoaderData} from "react-router-dom"
 import {useEffect, useState} from "react"
+import {getVans} from "../../api"
+
+export function loader({params}) {
+  // To access params from path here we have immediate access to param "params"
+  // console.log(params) // Output: id from url
+  return getVans(params.id)
+}
 
 export default function VanDetail() {
-  const params = useParams()
+  // const params = useParams()
   // will use useLocation hook to catch the state that we passed from "Vans"
   const location = useLocation()
   // console.log(location)
 
-  const [van, setVan] = useState(null)
+  const van = useLoaderData()
+  // console.log(van)
+
+  // const [van, setVan] = useState(null)
 
   //   console.log(useState)
 
-  useEffect(() => {
-    fetch(`/api/vans/${params.id}`)
-      .then((res) => res.json())
-      .then((data) => setVan(data.vans))
-      .catch((err) => console.log(err))
-  }, [params.id])
+  // useEffect(() => {
+  //   fetch(`/api/vans/${params.id}`)
+  //     .then((res) => res.json())
+  //     .then((data) => setVan(data.vans))
+  //     .catch((err) => console.log(err))
+  // }, [params.id])
 
   //   console.log(van)
 
@@ -38,20 +48,16 @@ export default function VanDetail() {
         &larr; <span>Back to {search ? search.split("=")[1] : "all"} vans</span>
       </Link>
 
-      {van ? (
-        <div className="van-detail">
-          <img src={van.imageUrl} />
-          <i className={`van-type ${van.type} selected`}>{van.type}</i>
-          <h2>{van.name}</h2>
-          <p className="van-price">
-            <span>${van.price}</span>/day
-          </p>
-          <p>{van.description}</p>
-          <button className="link-button">Rent this van</button>
-        </div>
-      ) : (
-        <h2>Loading...</h2>
-      )}
+      <div className="van-detail">
+        <img src={van.imageUrl} />
+        <i className={`van-type ${van.type} selected`}>{van.type}</i>
+        <h2>{van.name}</h2>
+        <p className="van-price">
+          <span>${van.price}</span>/day
+        </p>
+        <p>{van.description}</p>
+        <button className="link-button">Rent this van</button>
+      </div>
     </div>
   )
 }

@@ -7,14 +7,14 @@ import {
 
 import Home from "./pages/Home"
 import About from "./pages/About"
-import Vans, {loader as vansLoader} from "./pages/Vans/Vans"
-import VanDetail, {loader as vanDetailLoader} from "./pages/Vans/VanDetail"
+import Vans, { loader as vansLoader } from "./pages/Vans/Vans"
+import VanDetail, { loader as vanDetailLoader } from "./pages/Vans/VanDetail"
 import Layout from "./components/Layout"
-import Dashboard from "./pages/Host/Dashboard"
+import Dashboard, { loader as dashboardLoader } from "./pages/Host/Dashboard"
 import Income from "./pages/Host/Income"
 import Reviews from "./pages/Host/Reviews"
 import HostLayout from "./components/HostLayout"
-import HostVans, {loader as hostVansLoader} from "./pages/Host/HostVans"
+import HostVans, { loader as hostVansLoader } from "./pages/Host/HostVans"
 import HostVanDetail, {
   loader as hostVanDetailLoader,
 } from "./pages/Host/HostVanDetail"
@@ -27,13 +27,13 @@ import Login, {
   loader as loginLoader,
   action as loginAction,
 } from "./pages/Login"
-import {requireAuth} from "./utils"
+import { requireAuth } from "./utils"
 
 // Since we will be using DataLayer API and BrowserRouter does not support it we need to use createBroweser Router and needs to change the setup
 
 const browserRouter = createBrowserRouter(
   createRoutesFromElements(
-    <Route element={<Layout />} errorElement={<Error />}>
+    <Route element={<Layout />}>
       <Route path="/" element={<Home />} />
       <Route path="/about" element={<About />} />
       <Route
@@ -60,20 +60,16 @@ const browserRouter = createBrowserRouter(
         {/**
          * We will have to add loader to every host route (protected route) because the loader runs in parallel and that's why it is one of the current downside.
          */}
-        <Route
-          index
-          element={<Dashboard />}
-          loader={async ({request}) => await requireAuth(request)}
-        />
+        <Route index element={<Dashboard />} loader={dashboardLoader} />
         <Route
           path="income"
           element={<Income />}
-          loader={async ({request}) => await requireAuth({request})}
+          loader={async ({ request }) => await requireAuth(request)}
         />
         <Route
           path="reviews"
           element={<Reviews />}
-          loader={async ({request}) => await requireAuth(request)}
+          loader={async ({ request }) => await requireAuth(request)}
         />
 
         <Route path="vans" element={<HostVans />} loader={hostVansLoader} />
@@ -85,17 +81,17 @@ const browserRouter = createBrowserRouter(
           <Route
             index
             element={<HostVanInfo />}
-            loader={async ({request}) => await requireAuth(request)}
+            loader={async ({ request }) => await requireAuth(request)}
           />
           <Route
             path="pricing"
             element={<HostVanPricing />}
-            loader={async ({request}) => await requireAuth(request)}
+            loader={async ({ request }) => await requireAuth(request)}
           />
           <Route
             path="photos"
             element={<HostVanPhotos />}
-            loader={async ({request}) => await requireAuth(request)}
+            loader={async ({ request }) => await requireAuth(request)}
           />
         </Route>
       </Route>

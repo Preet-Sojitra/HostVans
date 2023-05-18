@@ -2,9 +2,9 @@
 import {redirect} from "./redirectUtil.js"
 
 export async function requireAuth(request) {
+  // console.log(request.url);
   const path = new URL(request.url).pathname
-  // console.log(path)
-
+  
   // Fake authentication
   const isLoggedIn = localStorage.getItem("loggedIn") || false
 
